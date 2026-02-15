@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="MyPrescription - Plateforme médicale professionnelle pour gérer vos consultations, prescriptions et agenda">
+  <meta name="keywords" content="médical, prescription, consultation, agenda médical, SaaS santé, professionnels santé">
+  <title>MyPrescription - Une nouvelle manière d'exercer</title>
+  <link rel="stylesheet" href="styles.css">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="content-wrapper">
+      
+      <!-- Information Panel - Left Side -->
+      <div class="info-panel">
+        <div class="brand-section">
+          <h1 class="brand-logo">MyPrescription</h1>
+          <h2 class="brand-tagline">Une nouvelle manière d'exercer</h2>
+          <p class="brand-description">
+            MyPrescription vous accompagne au quotidien avec des outils innovants pour gérer vos consultations, 
+            vos prescriptions et votre agenda en toute simplicité. Rejoignez des milliers de professionnels 
+            qui ont choisi l'excellence.
+          </p>
+        </div>
+
+        <div class="features-grid">
+          <div class="feature-card">
+            
+            <h3 class="feature-title">Agenda en ligne</h3>
+            <p class="feature-description">
+              Système de prise de rendez-vous disponible 24/7 pour vos patients
+            </p>
+          </div>
+
+          <div class="feature-card">
+            
+            <h3 class="feature-title">Prescription en ligne</h3>
+            <p class="feature-description">
+              Prescrivez à vos patients de manière sécurisée et conforme
+            </p>
+          </div>
+
+          <div class="feature-card">
+            
+            <h3 class="feature-title">Messagerie sécurisée</h3>
+            <p class="feature-description">
+              Échangez des informations médicales en toute confidentialité
+            </p>
+          </div>
+
+          <div class="feature-card">
+            
+            <h3 class="feature-title">Statistiques & Reporting</h3>
+            <p class="feature-description">
+              Tableaux de bord pour optimiser la gestion de votre cabinet
+            </p>
+          </div>
+        </div>
+
+        <div class="trust-badge">
+          <p><strong>Plus de 10 000</strong> professionnels de santé nous font confiance</p>
+          <div class="trust-features">
+            <span><i data-lucide="shield-check" class="trust-icon"></i> Sécurité maximale</span>
+            <span><i data-lucide="check-circle" class="trust-icon"></i> Conformité garantie</span>
+            <span><i data-lucide="headphones" class="trust-icon"></i> Support 6j/7</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Auth Card - Right Side -->
+      <div class="auth-card">
+        <div class="auth-header">
+          <h2 class="auth-title">Commencez gratuitement</h2>
+          <p class="auth-subtitle">Inscription simple et rapide, sans engagement</p>
+        </div>
+
+        <!-- Role Selector (Doctor / Patient) -->
+        <div class="role-selector">
+          <button class="role-btn active" data-role="doctor">
+            <i data-lucide="stethoscope" class="role-icon"></i>
+            <span>Médecin</span>
+          </button>
+          <button class="role-btn" data-role="patient">
+            <i data-lucide="user" class="role-icon"></i>
+            <span>Patient</span>
+          </button>
+        </div>
+
+        <!-- Auth Mode Toggle (Login / Signup) -->
+        <div class="auth-mode-toggle">
+          <div class="toggle-buttons">
+            <button class="toggle-btn active" data-mode="login">Connexion</button>
+            <button class="toggle-btn" data-mode="signup">Inscription</button>
+          </div>
+        </div>
+
+        <!-- LOGIN FORM - DOCTOR -->
+        <form class="auth-form active" id="doctor-login">
+          <div class="form-group">
+            <label for="doctor-login-email">Email professionnel</label>
+            <input 
+              type="email" 
+              id="doctor-login-email" 
+              placeholder="dr.martin@exemple.com"
+              required
+            >
+          </div>
+          
+          <div class="form-group">
+            <label for="doctor-login-password">Mot de passe</label>
+            <input 
+              type="password" 
+              id="doctor-login-password" 
+              placeholder="••••••••"
+              required
+            >
+          </div>
+
+          <button type="submit" class="submit-btn">
+            Se connecter
+          </button>
+        </form>
+
+        <!-- SIGNUP FORM - DOCTOR -->
+        <form class="auth-form" id="doctor-signup">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="doctor-firstname">Prénom</label>
+              <input 
+                type="text" 
+                id="doctor-firstname" 
+                placeholder="Dr. Jean"
+                required
+              >
+            </div>
+            
+            <div class="form-group">
+              <label for="doctor-lastname">Nom</label>
+              <input 
+                type="text" 
+                id="doctor-lastname" 
+                placeholder="Dupont"
+                required
+              >
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="doctor-email">Email professionnel</label>
+            <input 
+              type="email" 
+              id="doctor-email" 
+              placeholder="dr.dupont@exemple.com"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="doctor-phone">Numéro de téléphone</label>
+            <input 
+              type="tel" 
+              id="doctor-phone" 
+              placeholder="+33 6 12 34 56 78"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="doctor-license">Numéro de licence</label>
+            <input 
+              type="text" 
+              id="doctor-license" 
+              placeholder="Ex: 123456789"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="doctor-address">Adresse du cabinet</label>
+            <input 
+              type="text" 
+              id="doctor-address" 
+              placeholder="123 rue de la Santé, 75000 Paris"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="doctor-specialty">Spécialité médicale</label>
+            <select id="doctor-specialty" required>
+              <option value="">Choisissez votre spécialité</option>
+              <option value="medecine-generale">Médecine Générale</option>
+              <option value="cardiologie">Cardiologie</option>
+              <option value="dermatologie">Dermatologie</option>
+              <option value="pediatrie">Pédiatrie</option>
+              <option value="gynecologie">Gynécologie</option>
+              <option value="psychiatrie">Psychiatrie</option>
+              <option value="ophtalmologie">Ophtalmologie</option>
+              <option value="oto-rhino">ORL (Oto-Rhino-Laryngologie)</option>
+              <option value="chirurgie">Chirurgie</option>
+              <option value="radiologie">Radiologie</option>
+              <option value="anesthesie">Anesthésie-Réanimation</option>
+              <option value="endocrinologie">Endocrinologie</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="doctor-password">Mot de passe</label>
+            <input 
+              type="password" 
+              id="doctor-password" 
+              placeholder="Min. 8 caractères"
+              required
+            >
+            <div class="password-strength">
+              <div class="strength-bar">
+                <div class="strength-fill" id="doctor-strength-fill"></div>
+              </div>
+              <div class="strength-text" id="doctor-strength-text">Entrez un mot de passe</div>
+            </div>
+            <ul class="password-requirements">
+              <li id="doctor-req-length"><i data-lucide="circle" class="req-icon"></i> Au moins 8 caractères</li>
+              <li id="doctor-req-uppercase"><i data-lucide="circle" class="req-icon"></i> Une majuscule</li>
+              <li id="doctor-req-lowercase"><i data-lucide="circle" class="req-icon"></i> Une minuscule</li>
+              <li id="doctor-req-number"><i data-lucide="circle" class="req-icon"></i> Un chiffre</li>
+              <li id="doctor-req-special"><i data-lucide="circle" class="req-icon"></i> Un caractère spécial</li>
+            </ul>
+          </div>
+
+          <button type="submit" class="submit-btn">
+            Créer mon compte professionnel
+          </button>
+        </form>
+
+        <!-- LOGIN FORM - PATIENT -->
+        <form class="auth-form" id="patient-login">
+          <div class="form-group">
+            <label for="patient-login-email">Email</label>
+            <input 
+              type="email" 
+              id="patient-login-email" 
+              placeholder="patient@exemple.com"
+              required
+            >
+          </div>
+          
+          <div class="form-group">
+            <label for="patient-login-password">Mot de passe</label>
+            <input 
+              type="password" 
+              id="patient-login-password" 
+              placeholder="••••••••"
+              required
+            >
+          </div>
+
+          <button type="submit" class="submit-btn">
+            Se connecter
+          </button>
+        </form>
+
+        <!-- SIGNUP FORM - PATIENT -->
+        <form class="auth-form" id="patient-signup">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="patient-firstname">Prénom</label>
+              <input 
+                type="text" 
+                id="patient-firstname" 
+                placeholder="Marie"
+                required
+              >
+            </div>
+            
+            <div class="form-group">
+              <label for="patient-lastname">Nom</label>
+              <input 
+                type="text" 
+                id="patient-lastname" 
+                placeholder="Martin"
+                required
+              >
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="patient-email">Email</label>
+            <input 
+              type="email" 
+              id="patient-email" 
+              placeholder="marie.martin@exemple.com"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="patient-phone">Numéro de téléphone</label>
+            <input 
+              type="tel" 
+              id="patient-phone" 
+              placeholder="+213 6 12 34 56 78"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label>Sexe</label>
+            <div class="gender-group">
+              <div class="radio-option">
+                <input type="radio" id="patient-male" name="gender" value="male" required>
+                <label for="patient-male">Homme</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="patient-female" name="gender" value="female" required>
+                <label for="patient-female">Femme</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="patient-age">Âge</label>
+            <input 
+              type="number" 
+              id="patient-age" 
+              placeholder="25"
+              min="1"
+              max="120"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="patient-password">Mot de passe</label>
+            <input 
+              type="password" 
+              id="patient-password" 
+              placeholder="Min. 8 caractères"
+              required
+            >
+            <div class="password-strength">
+              <div class="strength-bar">
+                <div class="strength-fill" id="patient-strength-fill"></div>
+              </div>
+              <div class="strength-text" id="patient-strength-text">Entrez un mot de passe</div>
+            </div>
+            <ul class="password-requirements">
+              <li id="patient-req-length"><i data-lucide="circle" class="req-icon"></i> Au moins 8 caractères</li>
+              <li id="patient-req-uppercase"><i data-lucide="circle" class="req-icon"></i> Une majuscule</li>
+              <li id="patient-req-lowercase"><i data-lucide="circle" class="req-icon"></i> Une minuscule</li>
+              <li id="patient-req-number"><i data-lucide="circle" class="req-icon"></i> Un chiffre</li>
+              <li id="patient-req-special"><i data-lucide="circle" class="req-icon"></i> Un caractère spécial</li>
+            </ul>
+          </div>
+
+          <button type="submit" class="submit-btn">
+            Créer mon compte
+          </button>
+        </form>
+
+        <!-- Footer -->
+        <div class="auth-footer">
+          <p>
+            En continuant, vous acceptez nos 
+            <a href="#">Conditions d'utilisation</a> et notre 
+            <a href="#">Politique de confidentialité</a>
+          </p>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+  </script>
+</body>
+</html>
