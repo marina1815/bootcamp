@@ -1,18 +1,26 @@
-
+// ================================
+// MyPrescription - Authentication Logic
+// ================================
 
 document.addEventListener('DOMContentLoaded', () => {
-
+  // DOM Elements
   const roleButtons = document.querySelectorAll('.role-btn');
   const toggleButtons = document.querySelectorAll('.toggle-btn');
   const authForms = document.querySelectorAll('.auth-form');
   const submitButtons = document.querySelectorAll('.submit-btn');
 
+  // State
   let currentRole = 'DOCTOR'; // 'doctor' or 'patient'
   let currentMode = 'login';  // 'login' or 'signup'
 
+  // ================================
+  // Role Switching (Doctor/Patient)
+  // ================================
   roleButtons.forEach(button => {
     button.addEventListener('click', () => {
-      const role = button.
+      const role = button.dataset.role;
+      
+      // Update active state
       roleButtons.forEach(btn => btn.classList.remove('active'));
       button.classList.add('active');
       
