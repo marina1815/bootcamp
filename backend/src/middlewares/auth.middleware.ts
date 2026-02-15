@@ -2,9 +2,8 @@ import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { z } from "zod";
 
-// ✅ Payload attendu dans le JWT
 const JwtPayloadSchema = z.object({
-  sub: z.string(), // userId
+  sub: z.string(), 
   role: z.enum(["ADMIN", "DOCTOR", "ASSISTANT", "PATIENT"]),
   iat: z.number().optional(),
   exp: z.number().optional(),
@@ -15,7 +14,6 @@ export type AuthUser = {
   role: "ADMIN" | "DOCTOR" | "ASSISTANT" | "PATIENT";
 };
 
-// ✅ Ajout du type req.user à Express
 declare global {
   namespace Express {
     interface Request {
@@ -24,11 +22,7 @@ declare global {
   }
 }
 
-/**
- * ✅ Extraction du token depuis:
- * 1) Authorization: Bearer <token>
- * 2) cookie "access_token" (si tu utilises les cookies)
- */
+
 function getTokenFromRequest(req: Request): string | null {
   const authHeader = req.headers.authorization;
 
@@ -36,17 +30,13 @@ function getTokenFromRequest(req: Request): string | null {
     return authHeader.slice("Bearer ".length).trim();
   }
 
-  // optionnel: token en cookie (si cookie-parser est utilisé)
   const cookieToken = (req as any).cookies?.access_token;
   if (cookieToken) return cookieToken;
 
   return null;
 }
 
-/**
- * ✅ AUTH MIDDLEWARE
- * Vérifie JWT, et injecte req.user
- */
+
 export function authMiddleware(req: Request, res: Response, next: NextFunction) {
   try {
     const token = getTokenFromRequest(req);
@@ -90,10 +80,7 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction) 
   }
 }
 
-/**
- * ✅ AUTHORIZATION (ROLE-BASED ACCESS)
- * Exemple: requireRole("DOCTOR") ou requireRole("ADMIN","ASSISTANT")
- */
+
 export function requireRole(...allowedRoles: AuthUser["role"][]) {
   return (req: Request, res: Response, next: NextFunction) => {
     if (!req.user) {

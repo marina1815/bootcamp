@@ -1,14 +1,13 @@
 const API_BASE = "http://localhost:3000";
 
 document.addEventListener("DOMContentLoaded", async () => {
-  // 1) Auth check
+ 
   const token = localStorage.getItem("token");
   if (!token) {
     window.location.href = "index.html";
     return;
   }
 
-  // 2) Fetch user info
   let currentUser = null;
   try {
     const response = await fetch(`${API_BASE}/auth/me`, {
@@ -24,18 +23,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  // 3) Init UI
   initUI(currentUser);
 
-  // 4) Default tab
   loadTab("overview");
 });
 
-/* =========================
-   UI INIT
-========================= */
 function initUI(user) {
-  // Sidebar profile
+  
   const nameEl = document.getElementById("user-name");
   const initialsEl = document.getElementById("user-initials");
   const roleBadgeEl = document.getElementById("user-role-badge");
@@ -50,11 +44,10 @@ function initUI(user) {
 
   if (roleBadgeEl) {
     roleBadgeEl.textContent = (user.role || "ROLE").toUpperCase();
-    // optional: role badge styling by role
+    
     roleBadgeEl.dataset.role = user.role;
   }
 
-  // Show/hide role nav
   const navFindDoctor = document.getElementById("nav-find-doctor");
   const navMyPatients = document.getElementById("nav-my-patients");
   const navAuditLogs = document.getElementById("nav-audit-logs");
@@ -63,12 +56,10 @@ function initUI(user) {
   if (navMyPatients) navMyPatients.style.display = user.role === "DOCTOR" ? "flex" : "none";
   if (navAuditLogs) navAuditLogs.style.display = user.role === "ADMIN" ? "flex" : "none";
 
-  // Topbar: date
   const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
   const dateEl = document.getElementById("current-date");
   if (dateEl) dateEl.textContent = new Date().toLocaleDateString("fr-FR", options);
 
-  // Nav click
   document.querySelectorAll(".nav-item[data-tab]").forEach((btn) => {
     btn.addEventListener("click", () => {
       document.querySelectorAll(".nav-item[data-tab]").forEach((b) => b.classList.remove("active"));
@@ -77,18 +68,15 @@ function initUI(user) {
     });
   });
 
-  // Logout
   const logoutBtn = document.getElementById("logout-btn");
   if (logoutBtn) logoutBtn.addEventListener("click", logout);
 
-  // Refresh button (optional)
   const refreshBtn = document.getElementById("btn-refresh");
   if (refreshBtn) refreshBtn.addEventListener("click", () => {
     const active = document.querySelector(".nav-item[data-tab].active");
     loadTab(active?.dataset?.tab || "overview");
   });
 
-  // Quick action buttons (optional)
   const btnQuickBook = document.getElementById("btn-quick-book");
   const btnQuickSlot = document.getElementById("btn-quick-slot");
   if (btnQuickBook) btnQuickBook.style.display = user.role === "PATIENT" ? "inline-flex" : "none";
@@ -97,7 +85,6 @@ function initUI(user) {
   if (btnQuickBook) btnQuickBook.addEventListener("click", () => loadTab("find-doctor"));
   if (btnQuickSlot) btnQuickSlot.addEventListener("click", () => toast("Disponibilités: bientôt 😉", "info"));
 
-  // Modals close handling (data-close)
   setupModals();
 }
 
@@ -107,9 +94,6 @@ function logout() {
   window.location.href = "index.html";
 }
 
-/* =========================
-   TABS
-========================= */
 function loadTab(tabName) {
   const contentArea = document.getElementById("content-area");
   const pageTitle = document.getElementById("page-title");
@@ -153,7 +137,7 @@ function loadTab(tabName) {
     case "audit-logs":
       if (pageTitle) pageTitle.textContent = "Audit logs";
       if (pageSubtitle) pageSubtitle.textContent = "Historique de sécurité (admin)";
-      contentArea.innerHTML = `<div class="card"><h3>Audit logs</h3><p class="muted">À implémenter côté backend.</p></div>`;
+      loadAuditLogs(contentArea);
       break;
 
     default:
@@ -162,9 +146,102 @@ function loadTab(tabName) {
   }
 }
 
-/* =========================
-   OVERVIEW
-========================= */
+async function loadAuditLogs(container) {
+    // If container is not provided (e.g. refresh button), find the content section
+    if (!container) {
+        // We assume the tab structure is already there
+        const tbody = document.getElementById("audit-list");
+        if (tbody) {
+            tbody.innerHTML = '<tr><td colspan="6" class="muted">Chargement...</td></tr>';
+        }
+    } else {
+        // Initial render of the section if navigating
+         // The HTML is already in index.html, we just need to ensure it's visible
+         // But wait, loadTab usually clears contentArea.
+         // Let's stick to the pattern: clear contentArea, then clone/show the section?
+         // OR, since my previous HTML edit put the section *outside* content-area (display:none),
+         // checking dashboard.html again...
+         // Ah, I put the section as a sibling to content-area.
+         // So loadTab needs to hide content-area and show #audit section?
+         // Actually, the existing pattern allows swapping content inside #content-area.
+         // Let's adapt:
+         
+         const auditSection = document.getElementById("audit");
+         if(auditSection) {
+             // We can clone it or move it. 
+             // Simpler: Just build the HTML here like other tabs to be consistent.
+             container.innerHTML = `
+                <div class="section-header">
+                    <h2>Security Audit Logs</h2>
+                    <button class="btn btn-secondary" id="refresh-audit-btn">
+                        <i data-lucide="refresh-cw"></i> Refresh
+                    </button>
+                </div>
+                
+                <div class="card">
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Action</th>
+                                    <th>User</th>
+                                    <th>Status</th>
+                                    <th>IP</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody id="audit-list">
+                                <tr><td colspan="6" class="muted">Chargement...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+             `;
+             
+             document.getElementById("refresh-audit-btn")?.addEventListener("click", () => loadAuditLogs(container));
+         }
+    }
+
+    try {
+        const res = await fetchWithAuth(`${API_BASE}/audit-logs`);
+        const logs = await res.json();
+        
+        const tbody = document.getElementById("audit-list");
+        if(!tbody) return;
+
+        if(!logs || logs.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="muted">Aucun log trouvé.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = logs.map(log => `
+            <tr>
+                <td>${new Date(log.created_at).toLocaleString()}</td>
+                <td><strong>${log.action}</strong></td>
+                <td>
+                    ${log.user_email ? log.user_email : (log.user_id ? log.user_id : '<span class="muted">Guest</span>')}
+                </td>
+                <td>
+                    <span class="role-badge" style="background:${log.status === 'SUCCESS' ? '#dcfce7' : '#fee2e2'}; color:${log.status === 'SUCCESS' ? '#166534' : '#991b1b'}">
+                        ${log.status}
+                    </span>
+                </td>
+                <td>${log.ip_address || '—'}</td>
+                <td style="font-family:monospace; font-size:0.85em; max-width:200px; overflow:hidden; text-overflow:ellipsis;">
+                    ${log.details ? JSON.stringify(log.details) : '—'}
+                </td>
+            </tr>
+        `).join("");
+        
+        if (window.lucide) window.lucide.createIcons();
+
+    } catch (error) {
+        const tbody = document.getElementById("audit-list");
+        if(tbody) tbody.innerHTML = `<tr><td colspan="6" class="muted">Erreur: ${error.message}</td></tr>`;
+    }
+}
+
 async function loadOverview(user, container) {
   if (user.role === "DOCTOR") {
     try {
@@ -225,14 +302,9 @@ async function loadOverview(user, container) {
       document.querySelector('[data-tab="find-doctor"]')?.click();
     });
   }
-
-  // refresh lucide icons after injection
   if (window.lucide) window.lucide.createIcons();
 }
 
-/* =========================
-   APPOINTMENTS
-========================= */
 async function loadAppointments(user, container) {
   try {
     const appts = await fetchAppointments();
@@ -244,9 +316,6 @@ async function loadAppointments(user, container) {
   }
 }
 
-/* =========================
-   DOCTORS (Patient)
-========================= */
 async function loadDoctors(container) {
   try {
     const res = await fetchWithAuth(`${API_BASE}/doctors`);
@@ -269,7 +338,6 @@ async function loadDoctors(container) {
       grid.appendChild(card);
     });
 
-    // bind buttons
     container.querySelectorAll("[data-book]").forEach((btn) => {
       btn.addEventListener("click", () => {
         openBookingModal(btn.dataset.book, btn.dataset.name);
@@ -282,9 +350,6 @@ async function loadDoctors(container) {
   }
 }
 
-/* =========================
-   PATIENTS (Doctor)
-========================= */
 async function loadPatients(user, container) {
   container.innerHTML = `<div class="card"><h3>Patients récents</h3><div id="patients-list" class="muted">Chargement…</div></div>`;
 
@@ -332,9 +397,6 @@ async function loadPatients(user, container) {
   }
 }
 
-/* =========================
-   HELPERS
-========================= */
 async function fetchWithAuth(url, options = {}) {
   const token = localStorage.getItem("token");
   const headers = {
@@ -371,7 +433,6 @@ function renderAppointments(appointments, container, role) {
       const date = new Date(appt.date_time).toLocaleString("fr-FR");
       const statusClass = (appt.status || "").toLowerCase();
 
-      // More reliable "other party"
       let otherParty = "—";
       if (role === "PATIENT") {
         otherParty = `Dr. ${appt.doctor_first_name ?? ""} ${appt.doctor_last_name ?? ""}`.trim();
@@ -395,7 +456,6 @@ function renderAppointments(appointments, container, role) {
   container.innerHTML = html;
 }
 
-// simple XSS-safe helper for injected strings
 function escapeHtml(str) {
   return String(str)
     .replaceAll("&", "&amp;")
@@ -405,16 +465,11 @@ function escapeHtml(str) {
     .replaceAll("'", "&#039;");
 }
 
-/* =========================
-   MODALS
-========================= */
 function setupModals() {
-  // close buttons by data-close
   document.querySelectorAll("[data-close]").forEach((btn) => {
     btn.addEventListener("click", () => closeModal(btn.dataset.close));
   });
 
-  // click outside dialog closes modal
   document.querySelectorAll(".modal").forEach((m) => {
     m.addEventListener("click", (e) => {
       if (e.target === m) closeModal(m.id);
@@ -474,9 +529,6 @@ function closeModal(id) {
   m.setAttribute("aria-hidden", "true");
 }
 
-/* =========================
-   TOAST
-========================= */
 function toast(message, type = "success") {
   const area = document.getElementById("toastArea");
   if (!area) return alert(message);
@@ -508,5 +560,4 @@ function toast(message, type = "success") {
   setTimeout(() => el.remove(), 2800);
 }
 
-// Expose booking modal opener (optional)
 window.openBookingModal = openBookingModal;

@@ -4,7 +4,7 @@ import { Appointment } from "../models/appointment.model";
 
 export const createAppointment = async (req: Request, res: Response) => {
   const { doctorId, dateTime, reason } = req.body;
-  const patientId = (req as any).user.id; // Assuming auth middleware adds user to req
+  const patientId = (req as any).user.id;
 
   try {
     const result = await db.query(
@@ -21,7 +21,6 @@ export const createAppointment = async (req: Request, res: Response) => {
   }
 };
 
-// Get appointments for a user (patient or doctor)
 export const getAppointments = async (req: Request, res: Response) => {
   const userId = (req as any).user.id;
   const userRole = (req as any).user.role;

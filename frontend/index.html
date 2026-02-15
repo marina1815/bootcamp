@@ -7,14 +7,13 @@
   <meta name="keywords" content="médical, prescription, consultation, agenda médical, SaaS santé, professionnels santé">
   <title>MyPrescription - Une nouvelle manière d'exercer</title>
   <link rel="stylesheet" href="styles.css">
-  <!-- Lucide Icons -->
+  
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
   <div class="container">
     <div class="content-wrapper">
       
-      <!-- Information Panel - Left Side -->
       <div class="info-panel">
         <div class="brand-section">
           <h1 class="brand-logo">MyPrescription</h1>
@@ -70,14 +69,12 @@
         </div>
       </div>
 
-      <!-- Auth Card - Right Side -->
       <div class="auth-card">
         <div class="auth-header">
           <h2 class="auth-title">Commencez gratuitement</h2>
           <p class="auth-subtitle">Inscription simple et rapide, sans engagement</p>
         </div>
-
-        <!-- Role Selector (Doctor / Patient) -->
+\
         <div class="role-selector">
           <button class="role-btn active" data-role="doctor">
             <i data-lucide="stethoscope" class="role-icon"></i>
@@ -89,7 +86,6 @@
           </button>
         </div>
 
-        <!-- Auth Mode Toggle (Login / Signup) -->
         <div class="auth-mode-toggle">
           <div class="toggle-buttons">
             <button class="toggle-btn active" data-mode="login">Connexion</button>
@@ -97,7 +93,6 @@
           </div>
         </div>
 
-        <!-- LOGIN FORM - DOCTOR -->
         <form class="auth-form active" id="doctor-login">
           <div class="form-group">
             <label for="doctor-login-email">Email professionnel</label>
@@ -124,7 +119,6 @@
           </button>
         </form>
 
-        <!-- SIGNUP FORM - DOCTOR -->
         <form class="auth-form" id="doctor-signup">
           <div class="form-row">
             <div class="form-group">
@@ -235,7 +229,6 @@
           </button>
         </form>
 
-        <!-- LOGIN FORM - PATIENT -->
         <form class="auth-form" id="patient-login">
           <div class="form-group">
             <label for="patient-login-email">Email</label>
@@ -262,7 +255,6 @@
           </button>
         </form>
 
-        <!-- SIGNUP FORM - PATIENT -->
         <form class="auth-form" id="patient-signup">
           <div class="form-row">
             <div class="form-group">
@@ -360,7 +352,6 @@
           </button>
         </form>
 
-        <!-- Footer -->
         <div class="auth-footer">
           <p>
             En continuant, vous acceptez nos 
@@ -375,7 +366,6 @@
 
   <script src="script.js"></script>
   <script>
-    // Initialize Lucide icons
     lucide.createIcons();
   </script>
 </body>

@@ -2,9 +2,9 @@ import type { Request, Response, NextFunction } from "express";
 
 function cleanString(value: string): string {
   return value
-    .replace(/\u0000/g, "")     // supprime caractères null
+    .replace(/\u0000/g, "")     
     .trim()
-    .replace(/\s+/g, " ");      // réduit espaces multiples
+    .replace(/\s+/g, " ");    
 }
 
 function deepSanitize(obj: any): any {

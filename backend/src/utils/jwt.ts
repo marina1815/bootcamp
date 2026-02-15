@@ -2,15 +2,15 @@ import jwt from "jsonwebtoken";
 import { z } from "zod";
 
 const JwtPayloadSchema = z.object({
-  sub: z.string(), // userId
-  role: z.enum(["ADMIN", "DOCTOR", "ASSISTANT", "PATIENT"]),
+  sub: z.string(), 
+  role: z.enum(["ADMIN", "DOCTOR", "PATIENT"]),
   iat: z.number().optional(),
   exp: z.number().optional(),
 });
 
 export type JwtUser = {
   id: string;
-  role: "ADMIN" | "DOCTOR" | "ASSISTANT" | "PATIENT";
+  role: "ADMIN" | "DOCTOR"  | "PATIENT";
 };
 
 export function signAccessToken(user: JwtUser): string {
@@ -22,7 +22,7 @@ export function signAccessToken(user: JwtUser): string {
   return jwt.sign(
     { sub: user.id, role: user.role },
     secret,
-    { expiresIn }
+    { expiresIn: expiresIn as any }
   );
 }
 

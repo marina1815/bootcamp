@@ -1,64 +1,43 @@
-// ================================
-// MyPrescription - Authentication Logic
-// ================================
+
 
 document.addEventListener('DOMContentLoaded', () => {
-  // DOM Elements
+
   const roleButtons = document.querySelectorAll('.role-btn');
   const toggleButtons = document.querySelectorAll('.toggle-btn');
   const authForms = document.querySelectorAll('.auth-form');
   const submitButtons = document.querySelectorAll('.submit-btn');
 
-  // State
   let currentRole = 'DOCTOR'; // 'doctor' or 'patient'
   let currentMode = 'login';  // 'login' or 'signup'
 
-  // ================================
-  // Role Switching (Doctor/Patient)
-  // ================================
   roleButtons.forEach(button => {
     button.addEventListener('click', () => {
-      const role = button.dataset.role;
-      
-      // Update active state
+      const role = button.
       roleButtons.forEach(btn => btn.classList.remove('active'));
       button.classList.add('active');
       
-      // Update current role
       currentRole = role;
       
-      // Show appropriate form
       updateActiveForm();
     });
   });
 
-  // ================================
-  // Mode Switching (Login/Signup)
-  // ================================
   toggleButtons.forEach(button => {
     button.addEventListener('click', () => {
       const mode = button.dataset.mode;
       
-      // Update active state
       toggleButtons.forEach(btn => btn.classList.remove('active'));
       button.classList.add('active');
       
-      // Update current mode
       currentMode = mode;
       
-      // Show appropriate form
       updateActiveForm();
     });
   });
-
-  // ================================
-  // Update Active Form Display
-  // ================================
   function updateActiveForm() {
     // Hide all forms
     authForms.forEach(form => form.classList.remove('active'));
     
-    // Show the correct form based on role and mode
     const formId = `${currentRole}-${currentMode}`;
     const activeForm = document.getElementById(formId);
     
@@ -67,11 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // ================================
-  // Form Submission Handlers
-  // ================================
-  
-  // Doctor Login
   document.getElementById('doctor-login').addEventListener('submit', (e) => {
     e.preventDefault();
     
@@ -85,7 +59,6 @@ document.addEventListener('DOMContentLoaded', () => {
     handleFormSubmit(formData);
   });
 
-  // Doctor Signup
   document.getElementById('doctor-signup').addEventListener('submit', (e) => {
     e.preventDefault();
     
@@ -107,7 +80,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Patient Login
   document.getElementById('patient-login').addEventListener('submit', (e) => {
     e.preventDefault();
     
@@ -121,7 +93,6 @@ document.addEventListener('DOMContentLoaded', () => {
     handleFormSubmit(formData);
   });
 
-  // Patient Signup
   document.getElementById('patient-signup').addEventListener('submit', (e) => {
     e.preventDefault();
     
@@ -144,9 +115,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // ================================
-  // Validation Functions
-  // ================================
   
   function validateEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -154,7 +122,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function validatePhone(phone) {
-    // Basic phone validation (allows +33, 06, etc.)
     const phoneRegex = /^[\+]?[(]?[0-9]{1,4}[)]?[-\s\.]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,9}$/;
     return phoneRegex.test(phone.replace(/\s/g, ''));
   }
@@ -233,28 +200,23 @@ document.addEventListener('DOMContentLoaded', () => {
     return true;
   }
 
-  // ================================
-  // Form Submission Handler
-  // ================================
+  
  async function handleFormSubmit(data) {
-  console.log("📋 Sending data to API:", data);
+  console.log(" Sending data to API:", data);
 
   const API_BASE = "http://localhost:3000";
   const isLogin = data.type === "login";
   const endpoint = isLogin ? "/auth/login" : "/auth/register";
 
   try {
-    // ✅ Build payload safely
     let payload;
 
     if (isLogin) {
-      // LOGIN must only send email + password
       payload = {
         email: data.email,
         password: data.password,
       };
     } else {
-      // REGISTER sends full data except `type`
       payload = { ...data };
       delete payload.type;
     }

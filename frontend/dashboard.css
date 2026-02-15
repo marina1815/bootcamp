@@ -325,13 +325,12 @@ body{
   border:1px solid rgba(239,68,68,.25);
 }
 
-/* Main content */
+
 .content{
   padding: 0 26px 26px;
   overflow:auto;
 }
 
-/* Cards / grids (your old + new) */
 .card-grid{
   display:grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -491,7 +490,6 @@ body{
   box-shadow: 0 0 0 4px rgba(52,152,219,.12);
 }
 
-/* Toast area */
 .toast-area{
   position:fixed;
   right:18px;
@@ -502,7 +500,6 @@ body{
   z-index:2000;
 }
 
-/* Skeleton */
 .skeleton-grid{
   display:grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -520,7 +517,6 @@ body{
   100%{ background-position: 400px 0; }
 }
 
-/* Responsive */
 @media (max-width: 980px){
   .sidebar{
     width: 92px;

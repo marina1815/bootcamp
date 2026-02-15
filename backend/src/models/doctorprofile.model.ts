@@ -18,7 +18,7 @@ export type DoctorSpeciality =
 export interface DoctorProfile {
   id: string;
 
-  user_id: string;              // FK → User.id (role DOCTOR)
+  user_id: string;             
 
   speciality: DoctorSpeciality;
 

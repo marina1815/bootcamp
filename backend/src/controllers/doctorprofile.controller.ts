@@ -3,7 +3,6 @@ import { db } from "../db/connection";
 
 import { DoctorProfile } from "../models/doctorprofile.model";
 
-// Get all doctors with their user info
 export const getAllDoctors = async (req: Request, res: Response) => {
   try {
     const result = await db.query(`
@@ -30,20 +29,14 @@ export const getAllDoctors = async (req: Request, res: Response) => {
 
 
 
-/**
- * 🔹 Create Doctor Profile
- * Requires authMiddleware + requireRole("DOCTOR") in route
- */
 export const createDoctorProfile = async (req: Request, res: Response) => {
   try {
-    // 🔐 Ensure authenticated
     if (!req.user) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
     const userId = req.user.id;
 
-    // Optional: ensure role is DOCTOR
     if (req.user.role !== "DOCTOR") {
       return res.status(403).json({ message: "Only doctors can create profile" });
     }
@@ -56,7 +49,6 @@ export const createDoctorProfile = async (req: Request, res: Response) => {
       phone,
     } = req.body;
 
-    // 🔍 Check if profile already exists
     const existing = await db.query(
       `SELECT id FROM doctor_profiles WHERE user_id = $1`,
       [userId]
@@ -68,7 +60,6 @@ export const createDoctorProfile = async (req: Request, res: Response) => {
       });
     }
 
-    // 📝 Insert new profile
     const result = await db.query(
       `
       INSERT INTO doctor_profiles 

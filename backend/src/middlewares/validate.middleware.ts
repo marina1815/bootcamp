@@ -1,17 +1,12 @@
 import type { Request, Response, NextFunction } from "express";
 import { type ZodSchema, ZodError } from "zod";
 
-/**
- * ======================================================
- * 🔹 Validate Request Body
- * ======================================================
- */
+
 export function validateBody(schema: ZodSchema) {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
       const parsed = schema.parse(req.body);
 
-      // Replace body with validated & transformed data
       req.body = parsed;
 
       next();
@@ -22,7 +17,7 @@ export function validateBody(schema: ZodSchema) {
           message: issue.message,
         }));
         
-        console.error("❌ Validation Error:", JSON.stringify(errors, null, 2));
+        console.error(" Validation Error:", JSON.stringify(errors, null, 2));
 
         return res.status(400).json({
           error: "Validation error",
@@ -35,11 +30,6 @@ export function validateBody(schema: ZodSchema) {
   };
 }
 
-/**
- * ======================================================
- * 🔹 Validate Request Query
- * ======================================================
- */
 export function validateQuery(schema: ZodSchema) {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -66,11 +56,7 @@ export function validateQuery(schema: ZodSchema) {
   };
 }
 
-/**
- * ======================================================
- * 🔹 Validate Request Params (ex: /users/:id)
- * ======================================================
- */
+
 export function validateParams(schema: ZodSchema) {
   return (req: Request, res: Response, next: NextFunction) => {
     try {

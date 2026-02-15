@@ -1,0 +1,326 @@
+% !TEX program = pdflatex
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=2.2cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage[demo]{graphicx}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{listings}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  urlcolor=blue,
+  citecolor=black
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Bootcamp Intensif Full Stack TypeScript}
+\rhead{Final Project Documentation}
+\cfoot{\thepage}
+
+\titleformat{\section}{\Large\bfseries}{\thesection}{0.7em}{}
+\titleformat{\subsection}{\large\bfseries}{\thesubsection}{0.7em}{}
+
+\definecolor{codebg}{RGB}{245,245,245}
+\definecolor{codeframe}{RGB}{220,220,220}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  backgroundcolor=\color{codebg},
+  frame=single,
+  rulecolor=\color{codeframe},
+  breaklines=true,
+  columns=fullflexible,
+  upquote=true,
+  showstringspaces=false
+}
+
+\begin{document}
+
+\begin{titlepage}
+  \centering
+  \vspace*{2cm}
+  {\LARGE \textbf{Final Project Documentation}\par}
+  \vspace{0.6cm}
+  {\Large Bootcamp Intensif Full Stack TypeScript (5 jours)\par}
+  \vspace{1.2cm}
+
+  \begin{tabular}{@{}ll@{}}
+    \textbf{Participant:} & Hanaa Amira \\
+    \textbf{Project:} & Doctor--Patient Appointment Platform \\
+    \textbf{Stack:} & TypeScript, Node.js, PostgreSQL, Frontend Web \\
+    \textbf{Date:} & \today \\
+  \end{tabular}
+
+  \vspace{1.5cm}
+  \textbf{Repository (GitHub):} \\
+  \href{https://github.com/marina1815/bootcamp}{https://github.com/marina1815/bootcamp}
+
+  \vfill
+  {\small This document describes the architecture, implementation, security controls, and screenshots of the delivered project.}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+\section{Project Summary}
+
+This project is a mini SaaS web platform that enables:
+\begin{itemize}[leftmargin=1.2em]
+  \item \textbf{Patients} to book appointments with doctors.
+  \item \textbf{Doctors} to view their clients and manage appointments.
+\end{itemize}
+
+The implementation follows a production mindset: clear architecture, strict TypeScript typing, security controls, validation/sanitization, logging, and PostgreSQL persistence.
+
+\section{Objectives}
+
+The main objectives were:
+\begin{itemize}[leftmargin=1.2em]
+  \item Build a full stack TypeScript application (Front + Back).
+  \item Implement a REST API with clean layering (controllers, services, middlewares).
+  \item Enforce security best practices (JWT, RBAC, validation, rate limiting, audit logging).
+  \item Provide documentation and screenshots demonstrating functionality and security behavior.
+\end{itemize}
+
+\section{Architecture Overview}
+
+\subsection{High-level Diagram (Textual)}
+\begin{center}
+\begin{tabular}{@{}l@{}}
+Client (Browser) \\
+$\downarrow$ \\
+Frontend (Login, Dashboard, Patients, Appointments) \\
+$\downarrow$ \\
+Backend API (Node.js + TypeScript) \\
+$\downarrow$ \\
+PostgreSQL Database \\
+$\downarrow$ \\
+Logs / Audit Trail
+\end{tabular}
+\end{center}
+
+\subsection{Main Components}
+\begin{itemize}[leftmargin=1.2em]
+  \item \textbf{Frontend}: login flow, dashboard, forms and lists, protected routes.
+  \item \textbf{Backend API}: REST endpoints, auth, RBAC, validation, logging, error handling.
+  \item \textbf{Database (PostgreSQL)}: users, patients, appointments, audit logs.
+\end{itemize}
+
+\section{Technology Stack}
+
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Layer} & \textbf{Technology} \\
+\midrule
+Frontend & HTML/CSS/JS (or React/Next if applicable) \\
+Backend & Node.js, TypeScript, Express \\
+Database & PostgreSQL \\
+Security & JWT, RBAC, bcrypt, rate limiting, validation/sanitization \\
+Tooling & Bun/Node, npm, Git/GitHub \\
+\bottomrule
+\end{tabular}
+
+\section{Backend Implementation}
+
+\subsection{Folder Structure (Example)}
+\begin{lstlisting}
+src/
+  controllers/
+  services/
+  routes/
+  middleware/
+  dto/
+  models/
+  db/
+  utils/
+\end{lstlisting}
+
+\subsection{Data Models}
+Core entities:
+\begin{itemize}[leftmargin=1.2em]
+  \item \textbf{User}: id, email, passwordHash, role (ADMIN / DOCTOR / ASSISTANT), createdAt.
+  \item \textbf{Patient}: id, firstname, lastname, phone, createdAt.
+  \item \textbf{Appointment}: id, patientId, doctorId, dateTime, status, reason.
+  \item \textbf{AuditLog}: timestamp, event/action, result, actor, metadata (IP, endpoint).
+\end{itemize}
+
+\subsection{Controllers, Services, Routes}
+\begin{itemize}[leftmargin=1.2em]
+  \item \textbf{Controllers}: handle HTTP request/response and call services.
+  \item \textbf{Services}: business logic (create appointment, list patients, etc.).
+  \item \textbf{Routes}: define endpoints and apply middleware chain.
+\end{itemize}
+
+\section{Security Controls}
+
+\subsection{Authentication (JWT)}
+\begin{itemize}[leftmargin=1.2em]
+  \item Login verifies credentials (password hashed with \textbf{bcrypt}).
+  \item A JWT is issued with user identifier and role.
+  \item Protected endpoints require a valid token.
+\end{itemize}
+
+\subsection{Authorization (RBAC)}
+Role-based access control rules:
+\begin{itemize}[leftmargin=1.2em]
+  \item Patients management actions are restricted based on role.
+  \item Audit logs access is restricted to \textbf{ADMIN}.
+  \item Frontend hides restricted UI items and backend enforces restrictions (server-side).
+\end{itemize}
+
+\subsection{Validation \& Sanitization (DTOs)}
+\begin{itemize}[leftmargin=1.2em]
+  \item Requests are validated using strict DTO schemas.
+  \item Inputs are sanitized to reduce injection/XSS risk.
+  \item Invalid input returns consistent error messages.
+\end{itemize}
+
+\subsection{Rate Limiting}
+\begin{itemize}[leftmargin=1.2em]
+  \item Login endpoint rate limiting mitigates brute-force attempts.
+  \item Example behavior: after several attempts from the same IP, requests are temporarily blocked.
+\end{itemize}
+
+\subsection{Audit Logging}
+\begin{itemize}[leftmargin=1.2em]
+  \item Security-relevant actions are recorded (login success/failure, access denied, etc.).
+  \item Logs contain timestamps and context (actor, endpoint, IP) for traceability.
+\end{itemize}
+
+\section{Frontend Implementation}
+
+\subsection{Pages}
+\begin{itemize}[leftmargin=1.2em]
+  \item \textbf{Login}: user authentication and session initiation.
+  \item \textbf{Dashboard}: overview and quick actions.
+  \item \textbf{Patients}: list, create, update (depending on role).
+  \item \textbf{Appointments}: booking (patients) and consultation view (doctors).
+  \item \textbf{Audit Logs}: visible only for ADMIN.
+\end{itemize}
+
+\subsection{Protected Routes}
+Frontend routes are protected to prevent unauthorized access. Sensitive pages are hidden when role does not allow access. Backend authorization remains the source of truth.
+
+\section{API Endpoints (Example)}
+
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Method} & \textbf{Endpoint} & \textbf{Description} \\
+\midrule
+POST & /auth/login & Authenticate user, issue JWT \\
+GET & /users/me & Return authenticated user profile \\
+GET & /patients & List patients \\
+POST & /patients & Create patient (role dependent) \\
+GET & /appointments & List appointments \\
+POST & /appointments & Create appointment \\
+GET & /audit & Read audit logs (ADMIN only) \\
+\bottomrule
+\end{tabular}
+
+\section{Database Schema (High Level)}
+\begin{itemize}[leftmargin=1.2em]
+  \item \textbf{users}: user accounts and roles
+  \item \textbf{patients}: patient profiles
+  \item \textbf{appointments}: appointment records linking doctor and patient
+  \item \textbf{audit\_logs}: security and operational event traces
+\end{itemize}
+
+\section{Screenshots}
+
+\subsection{How to Add Screenshots}
+Place your images in a folder named \texttt{screens/} next to this \texttt{.tex} file.
+
+Example:
+\begin{lstlisting}
+project-doc/
+  main.tex
+  screens/
+    login.png
+    dashboard.png
+    rate-limit.png
+    rbac-deny.png
+    audit-admin.png
+\end{lstlisting}
+
+\subsection{Screenshot 1: Login Page}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{screens/login.png}
+  \caption{Login page used to authenticate users and start a secure session.}
+\end{figure}
+
+\subsection{Screenshot 2: Dashboard}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{screens/dashboard.png}
+  \caption{Dashboard view showing key actions and navigation.}
+\end{figure}
+
+\subsection{Screenshot 3: Rate Limiting (Login Protection)}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{screens/rate-limit.png}
+  \caption{Rate limiting behavior: repeated login attempts from the same IP are temporarily blocked.}
+\end{figure}
+
+\subsection{Screenshot 4: RBAC Restriction}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{screens/rbac-deny.png}
+  \caption{Role-based access control: restricted actions are blocked server-side even if attempted from the UI.}
+\end{figure}
+
+\subsection{Screenshot 5: Audit Logs (ADMIN Only)}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{screens/audit-admin.png}
+  \caption{Audit logs page accessible only by ADMIN, showing security-relevant events.}
+\end{figure}
+
+\section{How to Run the Project (Short)}
+
+\subsection{Backend}
+\begin{lstlisting}
+# install
+npm install
+
+# run
+npm run dev
+\end{lstlisting}
+
+\subsection{Database}
+\begin{itemize}[leftmargin=1.2em]
+  \item Configure PostgreSQL connection in \texttt{.env}.
+  \item Apply migrations / create tables as provided in the repository.
+\end{itemize}
+
+\subsection{Frontend}
+\begin{lstlisting}
+# If frontend is static
+Open index.html or run a local server
+
+# If React/Next
+npm install
+npm run dev
+\end{lstlisting}
+
+\section{Conclusion}
+
+This project demonstrates the ability to build a full stack TypeScript application with a production mindset, including security controls (JWT, RBAC, validation/sanitization, rate limiting, audit logs) and PostgreSQL persistence.
+
+\bigskip
+\noindent\textbf{GitHub Repository:} \href{https://github.com/marina1815/bootcamp}{https://github.com/marina1815/bootcamp}
+
+\end{document}

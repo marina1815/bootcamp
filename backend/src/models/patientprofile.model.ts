@@ -6,7 +6,7 @@ export type Sexe =
   export interface PatientProfile {
   id: string;
 
-  user_id: string;             // FK → User.id (role = PATIENT)
+  user_id: string;            
 
   age?: number;      
   phone?: string;

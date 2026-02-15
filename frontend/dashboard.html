@@ -12,7 +12,6 @@
 <body>
   <div class="app-shell">
 
-    <!-- Sidebar -->
     <aside class="sidebar" aria-label="Navigation principale">
       <div class="sidebar-top">
         <a href="dashboard.html" class="brand" aria-label="MyPrescription">
@@ -47,19 +46,16 @@
           <span>Rendez-vous</span>
         </button>
 
-        <!-- Patient only -->
         <button class="nav-item" data-tab="find-doctor" id="nav-find-doctor" type="button" style="display:none;">
           <i data-lucide="stethoscope"></i>
           <span>Trouver un médecin</span>
         </button>
 
-        <!-- Doctor only -->
         <button class="nav-item" data-tab="my-patients" id="nav-my-patients" type="button" style="display:none;">
           <i data-lucide="users"></i>
           <span>Mes patients</span>
         </button>
 
-        <!-- Admin only (optional) -->
         <button class="nav-item" data-tab="audit-logs" id="nav-audit-logs" type="button" style="display:none;">
           <i data-lucide="shield-check"></i>
           <span>Audit logs</span>
@@ -78,9 +74,9 @@
       </div>
     </aside>
 
-    <!-- Main -->
+    
     <main class="main">
-      <!-- Topbar -->
+      
       <header class="topbar" aria-label="Barre supérieure">
         <div class="topbar-left">
           <h1 class="page-title" id="page-title">Vue d’ensemble</h1>
@@ -95,14 +91,11 @@
               <i data-lucide="refresh-cw"></i>
               <span>Rafraîchir</span>
             </button>
-
-            <!-- Patient quick action -->
             <button class="btn btn-primary" id="btn-quick-book" type="button" style="display:none;">
               <i data-lucide="plus"></i>
               <span>Nouveau RDV</span>
             </button>
 
-            <!-- Doctor quick action -->
             <button class="btn btn-primary" id="btn-quick-slot" type="button" style="display:none;">
               <i data-lucide="clock"></i>
               <span>Disponibilités</span>
@@ -111,7 +104,6 @@
         </div>
       </header>
 
-      <!-- Toolbar -->
       <section class="toolbar" aria-label="Outils">
         <div class="search">
           <i data-lucide="search" aria-hidden="true"></i>
@@ -134,9 +126,8 @@
         </div>
       </section>
 
-      <!-- Content -->
       <section class="content" id="content-area" aria-live="polite">
-        <!-- Default skeleton -->
+        
         <div class="skeleton-grid">
           <div class="skeleton-card"></div>
           <div class="skeleton-card"></div>
@@ -145,12 +136,40 @@
         </div>
       </section>
 
-      <!-- Toast Area -->
+      <!-- Audit Logs Section (Admin Only) -->
+      <section id="audit" class="content-section" style="display:none;">
+          <div class="section-header">
+              <h2>Security Audit Logs</h2>
+              <button class="btn btn-secondary" onclick="loadAuditLogs()">
+                  <i data-lucide="refresh-cw"></i> Refresh
+              </button>
+          </div>
+          
+          <div class="card">
+              <div class="table-container">
+                  <table class="data-table" id="audit-table">
+                      <thead>
+                          <tr>
+                              <th>Timestamp</th>
+                              <th>Action</th>
+                              <th>User</th>
+                              <th>Status</th>
+                              <th>IP Address</th>
+                              <th>Details</th>
+                          </tr>
+                      </thead>
+                      <tbody id="audit-list">
+                          <!-- Populated via JS -->
+                      </tbody>
+                  </table>
+              </div>
+          </div>
+      </section>
+
       <div class="toast-area" id="toastArea" aria-live="assertive" aria-atomic="true"></div>
     </main>
   </div>
 
-  <!-- MODAL: Booking -->
   <div id="booking-modal" class="modal" aria-hidden="true">
     <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="booking-title">
       <div class="modal-header">

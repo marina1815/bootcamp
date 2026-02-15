@@ -24,12 +24,10 @@ export const DoctorSpecialitySchema = z.enum([
 ]);
 
 export const CreateDoctorProfileSchema = z.object({
-  // ⚠️ Idem : userId idéalement depuis JWT (docteur connecté)
-  // userId: z.string().uuid(),
+ 
 
   speciality: DoctorSpecialitySchema,
 
-  // si "autre" => tu peux demander un texte:
   otherSpeciality: z.string().min(2).max(60).transform(normalizeText).optional(),
 
   license_number: z.string().min(4).max(40).transform(normalizeText),
@@ -40,14 +38,13 @@ export const CreateDoctorProfileSchema = z.object({
 })
 .strict()
 .superRefine((data, ctx) => {
-  // ✅ Validation conditionnelle pro
- 
+
 });
 
 export type CreateDoctorProfileDTO = z.infer<typeof CreateDoctorProfileSchema>;
 
 export const UpdateDoctorProfileSchema = CreateDoctorProfileSchema
-  .omit({ license_number: true }) // souvent on évite de changer le numéro pro
+  .omit({ license_number: true }) 
   .partial()
   .strict();
 

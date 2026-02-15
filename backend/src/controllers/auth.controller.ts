@@ -4,9 +4,9 @@ import * as jwt from "jsonwebtoken";
 import type { Secret, SignOptions } from "jsonwebtoken";
 
 import { db } from "../db/connection";
+import { Logger } from "../services/logger.service";
+import { AuditService } from "../services/audit.service";
 
-// If you have auth.middleware typing (req.user), this will work better.
-// Otherwise you can keep Request as any in "me".
 type Role = "ADMIN" | "DOCTOR" | "ASSISTANT" | "PATIENT";
 
 const SALT_ROUNDS = 10;
@@ -14,7 +14,6 @@ const SALT_ROUNDS = 10;
 function getJwtSecret(): string {
   const secret = process.env.JWT_SECRET;
   if (!secret) {
-    // Fail fast: safer than "supersecret"
     throw new Error("JWT_SECRET missing in .env");
   }
   return secret;
@@ -35,8 +34,6 @@ function signToken(payload: { sub: string; role: Role }): string {
 
 
 
-
-// ✅ Helper to avoid leaking password_hash
 function publicUser(u: any) {
   return {
     id: u.id,
@@ -49,7 +46,6 @@ function publicUser(u: any) {
   };
 }
 
-// -------------------- REGISTER --------------------
 export const register = async (req: Request, res: Response) => {
   const { first_name, last_name, email, password, role, ...profileData } = req.body as {
     first_name: string;
@@ -57,7 +53,6 @@ export const register = async (req: Request, res: Response) => {
     email: string;
     password: string;
     role: Role;
-    // optional profile fields (doctor/patient)
     speciality?: string;
     license_number?: string;
     clinic_address?: string;
@@ -66,19 +61,18 @@ export const register = async (req: Request, res: Response) => {
     age?: number;
     sexe?: "homme" | "femme";
   };
-  console.log("BODY RECEIVED:", req.body);
+  
+  Logger.info("Register attempt", { email, role });
 
   try {
-    // 1) Check if email already exists
     const existing = await db.query("SELECT id FROM users WHERE email = $1", [email]);
     if (existing.rowCount && existing.rowCount > 0) {
+      Logger.warn("Register failed: Email exists", { email });
       return res.status(409).json({ message: "Email already in use" });
     }
 
-    // 2) Hash password
     const password_hash = await bcrypt.hash(password, SALT_ROUNDS);
 
-    // 3) Create user
     const userResult = await db.query(
       `
       INSERT INTO users (first_name, last_name, email, password_hash, role, created_at, updated_at)
@@ -90,14 +84,12 @@ export const register = async (req: Request, res: Response) => {
 
     const user = userResult.rows[0];
 
-    // 4) Create profile depending on role
     if (role === "DOCTOR") {
       const speciality = profileData.speciality;
       const license_number = profileData.license_number;
       const clinic_address = profileData.clinic_address;
       const phone = profileData.phone;
 
-      // minimal checks (DTO validation is still recommended)
       if (!speciality || !license_number) {
         return res.status(400).json({
           message: "Missing doctor profile fields",
@@ -116,12 +108,10 @@ export const register = async (req: Request, res: Response) => {
     }
 
     if (role === "PATIENT") {
-      // optional: if you already created patient_profiles table
       const age = profileData.age;
       const sexe = profileData.sexe;
       const phone = profileData.phone;
 
-      // create only if at least one field provided (optional)
       if (age !== undefined || sexe !== undefined || phone !== undefined) {
         await db.query(
           `
@@ -134,20 +124,27 @@ export const register = async (req: Request, res: Response) => {
       }
     }
 
-    // 5) Sign JWT
     const token = signToken({ sub: user.id, role: user.role });
+
+    await AuditService.log({
+      userId: user.id,
+      action: "REGISTER",
+      endpoint: "/auth/register",
+      ipAddress: req.ip || "unknown",
+      status: "SUCCESS",
+      details: { role: user.role }
+    });
 
     return res.status(201).json({
       token,
       user,
     });
   } catch (error) {
-    console.error("Register error:", error);
+    Logger.error("Register error:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
 
-// -------------------- LOGIN --------------------
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body as { email: string; password: string };
 
@@ -158,6 +155,14 @@ export const login = async (req: Request, res: Response) => {
     );
 
     if (!result.rowCount) {
+      Logger.warn("Login failed: User not found", { email, ip: req.ip });
+      await AuditService.log({
+        action: "LOGIN",
+        endpoint: "/auth/login",
+        ipAddress: req.ip || "unknown",
+        status: "FAILURE",
+        details: { reason: "User not found", email }
+      });
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
@@ -165,10 +170,27 @@ export const login = async (req: Request, res: Response) => {
     const match = await bcrypt.compare(password, user.password_hash);
 
     if (!match) {
+        Logger.warn("Login failed: Invalid password", { email, ip: req.ip });
+        await AuditService.log({
+          userId: user.id,
+          action: "LOGIN",
+          endpoint: "/auth/login",
+          ipAddress: req.ip || "unknown",
+          status: "FAILURE",
+          details: { reason: "Invalid password" }
+        });
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
     const token = signToken({ sub: user.id, role: user.role });
+
+    await AuditService.log({
+        userId: user.id,
+        action: "LOGIN",
+        endpoint: "/auth/login",
+        ipAddress: req.ip || "unknown",
+        status: "SUCCESS"
+      });
 
     return res.json({
       token,
@@ -181,14 +203,13 @@ export const login = async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
-    console.error("Login error:", error);
+    Logger.error("Login error:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
 
-// -------------------- ME --------------------
 export const me = async (req: Request, res: Response) => {
-  // expects authMiddleware to set req.user
+  
   const userId = (req as any).user?.id;
 
   if (!userId) {
@@ -207,7 +228,7 @@ export const me = async (req: Request, res: Response) => {
 
     return res.json(result.rows[0]);
   } catch (error) {
-    console.error("Me error:", error);
+    Logger.error("Me error:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
